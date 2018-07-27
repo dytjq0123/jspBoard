@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="post">
+
+  <select id="getPostDetail" parameterType="Integer" resultType="postVo">
+    select * 
+    from post where post_no = #{post_no}
+  </select>
+  
+  <!-- 게시글 정보 페이징 조회 -->
+  	<select id="getPostPageList" parameterType="map" resultType="postVo">
+			
+			SELECT * 
+				  FROM
+				(SELECT a.*, ROWNUM rn		  
+				  FROM (select post_no, lpad('└> ', (level-1)*3, ' ') || post_title as post_title, (SELECT std_id FROM student WHERE id = p.id) as std_id, post_date, delYn
+					 from post p
+					 where board_no = #{board_no}
+					start with pno is null
+					connect by prior post_no = pno
+					order siblings by gno desc) a)
+			WHERE rn BETWEEN (#{page}-1)*#{pageSize}+1 AND #{page}*#{pageSize}
+
+  	</select>
+  	
+  	<select id="getPostTotCnt" parameterType="int" resultType="int">
+  		select count(*)	from post where board_no = #{board_no}
+  	</select>
+  	
+  	<insert id="insertPost" parameterType="postVo">
+  		insert into post(post_no, 
+  					board_no,
+  					post_title,
+  					id,
+  					post_date,
+  					delYn,
+  					pno,
+  					gno,
+  					post_content)
+  				values(post_seq.nextval,
+  				#{board_no},
+  				#{post_title},
+  				#{id},
+  				sysdate,
+  				'n',
+  				null,
+  				(select count(*)+1 from post),
+  				#{post_content})
+  		
+  	</insert>
+  	
+  	<update id="updatePost" parameterType="postVo">
+<!--   		update post set board_no = #{board_no}, -->
+<!--   					post_title = #{post_title}, -->
+<!--   					id = #{id}, -->
+<!--   					post_date = sysdate, -->
+<!--   					delYn = #{delYn}, -->
+<!--   					pno = #{pno}, -->
+<!--   					gno = #{gno}, -->
+<!--   					post_content = #{post_content} -->
+<!--   		where post_no = #{post_no} -->
+  		
+  		update post set post_title = #{post_title},
+  					post_date = sysdate,
+  					post_content = #{post_content}
+  		where post_no = #{post_no}
+  	</update>
+  	
+  	<update id="deletePost" parameterType="Integer">
+  		update post set delYn = 'y'
+  		where post_no = #{post_no}
+  	</update>
+  	
+  	
+  	<insert id="answerPost" parameterType="postVo">
+  		insert into post(post_no, 
+  					board_no,
+  					post_title,
+  					id,
+  					post_date,
+  					delYn,
+  					pno,
+  					gno,
+  					post_content)
+  				values(post_seq.nextval,
+  				#{board_no},
+  				#{post_title},
+  				#{id},
+  				sysdate,
+  				'n',
+  				#{pno},
+  				#{gno},
+  				#{post_content})
+  		
+  	</insert>
+  	
+  	<select id="getAllCount" resultType="Integer">
+  		select count(*) from post
+  	</select>
+  
+</mapper>

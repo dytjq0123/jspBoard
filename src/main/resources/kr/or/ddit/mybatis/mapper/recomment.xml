@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="recomment">
+
+  <select id="getRecList" resultType="recVo" parameterType="Integer">
+    select r.*, (select std_id from student where id = r.id) as std_id from recomment r where post_no = #{post_no} order by rec_no
+  </select>
+  
+  <insert id="insertRec" parameterType="recVo">
+    insert into recomment (rec_no,
+    						post_no,
+    						id,
+    						rec_content,
+    						rec_date,
+    						delYn)
+    				values(recomment_seq.nextval,
+    						#{post_no},
+    						#{id},
+    						#{rec_content},
+    						sysdate,
+    						#{delYn})
+  </insert>
+  
+  <update id="deleteRec" parameterType="Integer">
+  	update recomment set delYn = 'y'
+  	where rec_no = #{rec_no}
+  </update>
+  
+  
+</mapper>
