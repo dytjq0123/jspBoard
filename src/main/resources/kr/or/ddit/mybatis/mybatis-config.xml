@@ -3,6 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+	<properties resource="kr/or/ddit/mybatis/db.properties"></properties>
   <typeAliases>
   	<typeAlias type="kr.or.ddit.student.model.StudentVo" alias="studentVo"/>
   	<typeAlias type="kr.or.ddit.board.model.BoardVo" alias="boardVo"/>
@@ -14,10 +15,10 @@
     <environment id="development">
       <transactionManager type="JDBC"/>
       <dataSource type="POOLED">
-        <property name="driver" value="oracle.jdbc.driver.OracleDriver"/>
-        <property name="url" value="jdbc:oracle:thin:@127.0.0.1:1521:xe"/>
-        <property name="username" value="pc05"/>
-        <property name="password" value="java"/>
+        <property name="driver" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
       </dataSource>
     </environment>
   </environments>
